@@ -6,6 +6,8 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 
 ## **Architecture**
 
+```bash
+
 ├── ansible/
 │   ├── play.yml                # Ansible playbook for provisioning and deploying the application
 │   ├── inventory.ini               # Inventory file with master and worker node details
@@ -37,6 +39,8 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 │   ├── docker-compose.yml          # Docker Compose file for local deployment
 │
 └── README.md                       # Project Documentation
+```
+
 
 ### **High-Level Architecture:**
 
