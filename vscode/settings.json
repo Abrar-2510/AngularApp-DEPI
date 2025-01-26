@@ -1,0 +1,15 @@
+{
+    "highlight.regexes": {
+  "\\.ini$": {
+    "regexFlags": "gi",
+    "filterFileRegex": "\\.ini$",
+    "decorations": [
+      {
+        "color": "#FF5733",
+        "fontWeight": "bold"
+      }
+    ]
+  }
+}
+
+}

@@ -1,0 +1,17 @@
+- name: Provision Kubernetes Cluster
+  hosts: all
+  become: true
+  roles:
+    - common
+
+- name: Setup Master Node
+  hosts: masters
+  become: true
+  roles:
+    - master
+
+- name: Setup Worker Node
+  hosts: workers
+  become: true
+  roles:
+    - worker
