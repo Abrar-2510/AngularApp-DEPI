@@ -4,7 +4,9 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 
 ---
 
-## **Architecture**
+## Project Structure
+
+![Kubernetes Architecture](diagrams/Untitled%20Diagram.drawio%20(3).png)
 
 ```bash
 
@@ -122,3 +124,9 @@ Run the following Ansible command to provision the Kubernetes cluster with 1 mas
 ```bash
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yml 
 ```
+
+## project screens connected
+
+![nginx](diagrams/nginx.jpg)
+![nginx](diagrams/db.jpg)
+![nginx](diagrams/phpmyadmin.jpg)

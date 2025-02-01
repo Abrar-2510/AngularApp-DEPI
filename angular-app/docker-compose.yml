@@ -1,26 +1,65 @@
 version: "3.8"
+
 services:
   frontend:
     build:
-      context: .
-      dockerfile: ./front-end/Dockerfile
+      context: .  
+      dockerfile: ./frontend/Dockerfile  
     ports:
       - "80:80"
+    networks:
+      - angular-app-network
 
   backend:
     build:
-      context: .
-      dockerfile: ./backend/Dockerfile
+      context: . 
+      dockerfile: ./backend/Dockerfile  
     ports:
-      - "8080:8080"
+      - "3000:3000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: root
+      DB_PASSWORD: rootpassword
+      DB_NAME: appdb
+    depends_on:
+      - mysql
+    networks:
+      - angular-app-network
 
   mysql:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: appdb
+      MYSQL_DATABASE: angular
+    ports:
+      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+    networks:
+      - angular-app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+    networks:
+      - angular-app-network
 
 volumes:
   mysql-data:
+
+networks:
+  angular-app-network:
+    driver: bridge

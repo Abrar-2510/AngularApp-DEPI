@@ -16,4 +16,4 @@ spec:
         - name: backend
           image: abrar2510/angularapp:backend-latest
           ports:
-            - containerPort: 8080
+            - containerPort: 3000

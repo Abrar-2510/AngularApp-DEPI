@@ -1,29 +1,4 @@
 ---
-# tasks file for worker
-
-- name: Install dependencies on Debian-based systems (for Kubernetes repository)
-  package:
-    name:
-      - apt-transport-https
-      - gnupg
-    state: present
-  become: yes
-  when: ansible_facts['os_family'] == 'Debian'
-
-- name: Ensure apt sources directory exists (for Debian-based systems)
-  file:
-    path: /etc/apt/sources.list.d/
-    state: directory
-  become: yes
-  when: ansible_facts['os_family'] == 'Debian'
-
-- name: Add Kubernetes apt repository (for Debian-based systems)
-  shell: |
-    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/k8s-archive-keyring.gpg
-    echo "deb [signed-by=/usr/share/keyrings/k8s-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list
-  become: yes
-  when: ansible_facts['os_family'] == 'Debian'
-
 - name: Install Kubernetes packages on worker
   package:
     name:
@@ -31,8 +6,8 @@
       - kubeadm
       - kubectl
     state: present
-  become: yes
+  when: ansible_facts['os_family'] == 'Debian'
 
-- name: Join Kubernetes worker node to master
+- name: Join worker node to master
   command: kubeadm join {{ hostvars['master']['kubeadm_init'].stdout_lines | last }} --token {{ master_token }} --discovery-token-ca-cert-hash sha256:{{ discovery_token_hash }}
-  become: yes
+  when: ansible_facts['os_family'] == 'Debian' and ansible_hostname != 'master'
