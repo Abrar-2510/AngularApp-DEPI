@@ -73,7 +73,6 @@ import {
   KeyValueDiffers,
   LContext,
   LOCALE_ID,
-  LifecycleHooksFeature,
   LocaleDataIndex,
   MicrotaskEffectScheduler,
   MissingTranslationStrategy,
@@ -494,7 +493,7 @@ import {
   ɵɵvalidateIframeAttribute,
   ɵɵviewQuery,
   ɵɵviewQuerySignal
-} from "./chunk-6CJ6BJGL.js";
+} from "./chunk-NTS2FYPI.js";
 export {
   ANIMATION_MODULE_TYPE,
   APP_BOOTSTRAP_LISTENER,
@@ -669,7 +668,6 @@ export {
   IS_INCREMENTAL_HYDRATION_ENABLED as ɵIS_INCREMENTAL_HYDRATION_ENABLED,
   JSACTION_EVENT_CONTRACT as ɵJSACTION_EVENT_CONTRACT,
   LContext as ɵLContext,
-  LifecycleHooksFeature as ɵLifecycleHooksFeature,
   LocaleDataIndex as ɵLocaleDataIndex,
   MicrotaskEffectScheduler as ɵMicrotaskEffectScheduler,
   NG_COMP_DEF as ɵNG_COMP_DEF,

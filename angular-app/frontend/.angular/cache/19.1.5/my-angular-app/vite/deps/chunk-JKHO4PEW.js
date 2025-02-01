@@ -3,7 +3,7 @@ import {
   XhrFactory,
   isPlatformServer,
   parseCookieValue
-} from "./chunk-HP5WB7RT.js";
+} from "./chunk-LNGJQ4BE.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -42,7 +42,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-6CJ6BJGL.js";
+} from "./chunk-NTS2FYPI.js";
 
 // node_modules/@angular/common/fesm2022/http.mjs
 var HttpHandler = class {
@@ -628,10 +628,11 @@ function isUrlSearchParams(value) {
   return typeof URLSearchParams !== "undefined" && value instanceof URLSearchParams;
 }
 var CONTENT_TYPE_HEADER = "Content-Type";
+var ACCEPT_HEADER = "Accept";
 var X_REQUEST_URL_HEADER = "X-Request-URL";
 var TEXT_CONTENT_TYPE = "text/plain";
 var JSON_CONTENT_TYPE = "application/json";
-var ACCEPT_HEADER = `${JSON_CONTENT_TYPE}, ${TEXT_CONTENT_TYPE}, */*`;
+var ACCEPT_HEADER_VALUE = `${JSON_CONTENT_TYPE}, ${TEXT_CONTENT_TYPE}, */*`;
 var HttpRequest = class _HttpRequest {
   url;
   /**
@@ -1083,21 +1084,21 @@ var HttpClient = class _HttpClient {
           case "arraybuffer":
             return res$.pipe(map((res) => {
               if (res.body !== null && !(res.body instanceof ArrayBuffer)) {
-                throw new Error("Response is not an ArrayBuffer.");
+                throw new RuntimeError(2806, ngDevMode && "Response is not an ArrayBuffer.");
               }
               return res.body;
             }));
           case "blob":
             return res$.pipe(map((res) => {
               if (res.body !== null && !(res.body instanceof Blob)) {
-                throw new Error("Response is not a Blob.");
+                throw new RuntimeError(2807, ngDevMode && "Response is not a Blob.");
               }
               return res.body;
             }));
           case "text":
             return res$.pipe(map((res) => {
               if (res.body !== null && typeof res.body !== "string") {
-                throw new Error("Response is not a string.");
+                throw new RuntimeError(2808, ngDevMode && "Response is not a string.");
               }
               return res.body;
             }));
@@ -1108,7 +1109,7 @@ var HttpClient = class _HttpClient {
       case "response":
         return res$;
       default:
-        throw new Error(`Unreachable: unhandled observe type ${options.observe}}`);
+        throw new RuntimeError(2809, ngDevMode && `Unreachable: unhandled observe type ${options.observe}}`);
     }
   }
   /**
@@ -1370,8 +1371,8 @@ var FetchBackend = class _FetchBackend {
     const headers = {};
     const credentials = req.withCredentials ? "include" : void 0;
     req.headers.forEach((name, values) => headers[name] = values.join(","));
-    if (!req.headers.has("Accept")) {
-      headers["Accept"] = ACCEPT_HEADER;
+    if (!req.headers.has(ACCEPT_HEADER)) {
+      headers[ACCEPT_HEADER] = ACCEPT_HEADER_VALUE;
     }
     if (!req.headers.has(CONTENT_TYPE_HEADER)) {
       const detectedType = req.detectContentTypeHeader();
@@ -1705,8 +1706,8 @@ var HttpXhrBackend = class _HttpXhrBackend {
           xhr.withCredentials = true;
         }
         req.headers.forEach((name, values) => xhr.setRequestHeader(name, values.join(",")));
-        if (!req.headers.has("Accept")) {
-          xhr.setRequestHeader("Accept", ACCEPT_HEADER);
+        if (!req.headers.has(ACCEPT_HEADER)) {
+          xhr.setRequestHeader(ACCEPT_HEADER, ACCEPT_HEADER_VALUE);
         }
         if (!req.headers.has(CONTENT_TYPE_HEADER)) {
           const detectedType = req.detectContentTypeHeader();
@@ -2425,9 +2426,9 @@ export {
 
 @angular/common/fesm2022/http.mjs:
   (**
-   * @license Angular v19.1.2
+   * @license Angular v19.1.4
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-TSTSAX4G.js.map
+//# sourceMappingURL=chunk-JKHO4PEW.js.map

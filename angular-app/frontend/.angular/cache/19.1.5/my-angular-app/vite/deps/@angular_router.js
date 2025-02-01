@@ -1,7 +1,7 @@
 import {
   Title
-} from "./chunk-QLGOH45Q.js";
-import "./chunk-TSTSAX4G.js";
+} from "./chunk-RT3ITFMY.js";
+import "./chunk-JKHO4PEW.js";
 import {
   DOCUMENT,
   HashLocationStrategy,
@@ -10,7 +10,7 @@ import {
   LocationStrategy,
   PathLocationStrategy,
   ViewportScroller
-} from "./chunk-HP5WB7RT.js";
+} from "./chunk-LNGJQ4BE.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   APP_INITIALIZER,
@@ -23,6 +23,7 @@ import {
   ConnectableObservable,
   Console,
   ContentChildren,
+  DestroyRef,
   Directive,
   EMPTY,
   ENVIRONMENT_INITIALIZER,
@@ -111,7 +112,7 @@ import {
   ɵɵloadQuery,
   ɵɵqueryRefresh,
   ɵɵsanitizeUrlOrResourceUrl
-} from "./chunk-6CJ6BJGL.js";
+} from "./chunk-NTS2FYPI.js";
 
 // node_modules/@angular/router/fesm2022/router.mjs
 var PRIMARY_OUTLET = "primary";
@@ -3590,6 +3591,7 @@ var NavigationTransitions = class _NavigationTransitions {
   transitionAbortSubject = new Subject();
   configLoader = inject(RouterConfigLoader);
   environmentInjector = inject(EnvironmentInjector);
+  destroyRef = inject(DestroyRef);
   urlSerializer = inject(UrlSerializer);
   rootContexts = inject(ChildrenOutletContexts);
   location = inject(Location);
@@ -3622,11 +3624,15 @@ var NavigationTransitions = class _NavigationTransitions {
   afterPreactivation = () => of(void 0);
   /** @internal */
   rootComponentType = null;
+  destroyed = false;
   constructor() {
     const onLoadStart = (r) => this.events.next(new RouteConfigLoadStart(r));
     const onLoadEnd = (r) => this.events.next(new RouteConfigLoadEnd(r));
     this.configLoader.onLoadEndListener = onLoadEnd;
     this.configLoader.onLoadStartListener = onLoadStart;
+    this.destroyRef.onDestroy(() => {
+      this.destroyed = true;
+    });
   }
   complete() {
     this.transitions?.complete();
@@ -3876,6 +3882,10 @@ var NavigationTransitions = class _NavigationTransitions {
             }
           }),
           catchError((e) => {
+            if (this.destroyed) {
+              overallTransitionState.resolve(false);
+              return EMPTY;
+            }
             errored = true;
             if (isNavigationCancelingError(e)) {
               this.events.next(new NavigationCancel(overallTransitionState.id, this.urlSerializer.serialize(overallTransitionState.extractedUrl), e.message, e.cancellationCode));
@@ -5866,7 +5876,7 @@ function mapToCanDeactivate(providers) {
 function mapToResolve(provider) {
   return (...params) => inject(provider).resolve(...params);
 }
-var VERSION = new Version("19.1.2");
+var VERSION = new Version("19.1.4");
 function getLoadedRoutes(route) {
   return route._loadedRoutes;
 }
@@ -5955,7 +5965,7 @@ export {
 
 @angular/router/fesm2022/router.mjs:
   (**
-   * @license Angular v19.1.2
+   * @license Angular v19.1.4
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)

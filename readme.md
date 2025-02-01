@@ -124,9 +124,23 @@ Run the following Ansible command to provision the Kubernetes cluster with 1 mas
 ```bash
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yml 
 ```
+### **Step 2: U can Run Your Angular Application (locally)**
+
+```bash
+ng serve --open
+```
+### **Step 3: U can Run Your Angular Application (externally)**
+
+```bash
+kubectl get ingress
+```
 
 ## project screens connected
 
+![nginx](diagrams/run.jpg)
 ![nginx](diagrams/nginx.jpg)
 ![nginx](diagrams/db.jpg)
-![nginx](diagrams/phpmyadmin.jpg)
+![nginx](diagrams/php.jpg)
+![nginx](diagrams/run.jpg)
+![nginx](diagrams/angular%20appjpg.jpg)
+

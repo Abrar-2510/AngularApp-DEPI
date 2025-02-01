@@ -61,7 +61,7 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-6CJ6BJGL.js";
+} from "./chunk-NTS2FYPI.js";
 
 // node_modules/@angular/common/fesm2022/common.mjs
 var _DOM = null;
@@ -199,26 +199,12 @@ var BrowserPlatformLocation = class _BrowserPlatformLocation extends PlatformLoc
   }], () => [], null);
 })();
 function joinWithSlash(start, end) {
-  if (start.length == 0) {
-    return end;
-  }
-  if (end.length == 0) {
-    return start;
-  }
-  let slashes = 0;
+  if (!start) return end;
+  if (!end) return start;
   if (start.endsWith("/")) {
-    slashes++;
+    return end.startsWith("/") ? start + end.slice(1) : start + end;
   }
-  if (end.startsWith("/")) {
-    slashes++;
-  }
-  if (slashes == 2) {
-    return start + end.substring(1);
-  }
-  if (slashes == 1) {
-    return start + end;
-  }
-  return start + "/" + end;
+  return end.startsWith("/") ? start + end : `${start}/${end}`;
 }
 function stripTrailingSlash(url) {
   const match = url.match(/#|\?|$/);
@@ -3471,10 +3457,8 @@ function defaultComparator(keyValueA, keyValueB) {
   const a = keyValueA.key;
   const b = keyValueB.key;
   if (a === b) return 0;
-  if (a === void 0) return 1;
-  if (b === void 0) return -1;
-  if (a === null) return 1;
-  if (b === null) return -1;
+  if (a == null) return 1;
+  if (b == null) return -1;
   if (typeof a == "string" && typeof b == "string") {
     return a < b ? -1 : 1;
   }
@@ -3710,7 +3694,7 @@ function isPlatformBrowser(platformId) {
 function isPlatformServer(platformId) {
   return platformId === PLATFORM_SERVER_ID;
 }
-var VERSION = new Version("19.1.2");
+var VERSION = new Version("19.1.4");
 var ViewportScroller = class _ViewportScroller {
   // De-sugared tree-shakable injection
   // See #23917
@@ -4144,7 +4128,6 @@ var INTERNAL_PRECONNECT_CHECK_BLOCKLIST = /* @__PURE__ */ new Set(["localhost", 
 var PRECONNECT_CHECK_BLOCKLIST = new InjectionToken(ngDevMode ? "PRECONNECT_CHECK_BLOCKLIST" : "");
 var PreconnectLinkChecker = class _PreconnectLinkChecker {
   document = inject(DOCUMENT);
-  isServer = isPlatformServer(inject(PLATFORM_ID));
   /**
    * Set of <link rel="preconnect"> tags found on this page.
    * The `null` value indicates that there was no DOM query operation performed.
@@ -4154,14 +4137,10 @@ var PreconnectLinkChecker = class _PreconnectLinkChecker {
    * Keep track of all already seen origin URLs to avoid repeating the same check.
    */
   alreadySeen = /* @__PURE__ */ new Set();
-  window = null;
+  window = this.document.defaultView;
   blocklist = new Set(INTERNAL_PRECONNECT_CHECK_BLOCKLIST);
   constructor() {
     assertDevMode("preconnect link checker");
-    const win = this.document.defaultView;
-    if (typeof win !== "undefined") {
-      this.window = win;
-    }
     const blocklist = inject(PRECONNECT_CHECK_BLOCKLIST, {
       optional: true
     });
@@ -4186,7 +4165,7 @@ var PreconnectLinkChecker = class _PreconnectLinkChecker {
    * @param originalNgSrc ngSrc value
    */
   assertPreconnect(rewrittenSrc, originalNgSrc) {
-    if (this.isServer) return;
+    if (false) return;
     const imgUrl = getUrl(rewrittenSrc, this.window);
     if (this.blocklist.has(imgUrl.hostname) || this.alreadySeen.has(imgUrl.origin)) return;
     this.alreadySeen.add(imgUrl.origin);
@@ -4320,8 +4299,6 @@ var NgOptimizedImage = class _NgOptimizedImage {
   renderer = inject(Renderer2);
   imgElement = inject(ElementRef).nativeElement;
   injector = inject(Injector);
-  isServer = isPlatformServer(inject(PLATFORM_ID));
-  preloadLinkCreator = inject(PreloadLinkCreator);
   // An LCP image observer should be injected only in development mode.
   // Do not assign it to `null` to avoid having a redundant property in the production bundle.
   lcpObserver;
@@ -4465,7 +4442,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
       if (this.priority) {
         const checker = this.injector.get(PreconnectLinkChecker);
         checker.assertPreconnect(this.getRewrittenSrc(), this.ngSrc);
-        if (!this.isServer) {
+        if (true) {
           const applicationRef = this.injector.get(ApplicationRef);
           assetPriorityCountBelowThreshold(applicationRef);
         }
@@ -4498,8 +4475,9 @@ var NgOptimizedImage = class _NgOptimizedImage {
         this.setHostAttribute("sizes", "auto, 100vw");
       }
     }
-    if (this.isServer && this.priority) {
-      this.preloadLinkCreator.createPreloadLinkTag(this.renderer, this.getRewrittenSrc(), rewrittenSrcset, this.sizes);
+    if (false) {
+      const preloadLinkCreator = this.injector.get(PreloadLinkCreator);
+      preloadLinkCreator.createPreloadLinkTag(this.renderer, this.getRewrittenSrc(), rewrittenSrcset, this.sizes);
     }
   }
   /** @nodoc */
@@ -4520,7 +4498,7 @@ var NgOptimizedImage = class _NgOptimizedImage {
         }
       }
     }
-    if (ngDevMode && changes["placeholder"]?.currentValue && !this.isServer) {
+    if (ngDevMode && changes["placeholder"]?.currentValue && true && true) {
       assertPlaceholderDimensions(this, this.imgElement);
     }
   }
@@ -5154,9 +5132,9 @@ export {
 
 @angular/common/fesm2022/common.mjs:
   (**
-   * @license Angular v19.1.2
+   * @license Angular v19.1.4
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-HP5WB7RT.js.map
+//# sourceMappingURL=chunk-LNGJQ4BE.js.map

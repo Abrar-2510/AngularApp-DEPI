@@ -1,6 +1,6 @@
 import {
   withHttpTransferCache
-} from "./chunk-TSTSAX4G.js";
+} from "./chunk-JKHO4PEW.js";
 import {
   CommonModule,
   DOCUMENT,
@@ -11,7 +11,7 @@ import {
   isPlatformServer,
   parseCookieValue,
   setRootDomAdapter
-} from "./chunk-HP5WB7RT.js";
+} from "./chunk-LNGJQ4BE.js";
 import {
   APP_ID,
   ApplicationModule,
@@ -72,7 +72,7 @@ import {
   ɵɵdefineInjector,
   ɵɵdefineNgModule,
   ɵɵinject
-} from "./chunk-6CJ6BJGL.js";
+} from "./chunk-NTS2FYPI.js";
 
 // node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs
 var GenericBrowserDomAdapter = class extends DomAdapter {
@@ -483,6 +483,8 @@ var NAMESPACE_URIS = {
   "math": "http://www.w3.org/1998/Math/MathML"
 };
 var COMPONENT_REGEX = /%COMP%/g;
+var SOURCEMAP_URL_REGEXP = /\/\*#\s*sourceMappingURL=(.+?)\s*\*\//;
+var PROTOCOL_REGEXP = /^https?:/;
 var COMPONENT_VARIABLE = "%COMP%";
 var HOST_ATTR = `_nghost-${COMPONENT_VARIABLE}`;
 var CONTENT_ATTR = `_ngcontent-${COMPONENT_VARIABLE}`;
@@ -499,6 +501,26 @@ function shimHostAttribute(componentShortId) {
 }
 function shimStylesContent(compId, styles) {
   return styles.map((s) => s.replace(COMPONENT_REGEX, compId));
+}
+function addBaseHrefToCssSourceMap(baseHref, styles) {
+  if (!baseHref) {
+    return styles;
+  }
+  const absoluteBaseHrefUrl = new URL(baseHref, "http://localhost");
+  return styles.map((cssContent) => {
+    if (!cssContent.includes("sourceMappingURL=")) {
+      return cssContent;
+    }
+    return cssContent.replace(SOURCEMAP_URL_REGEXP, (_, sourceMapUrl) => {
+      if (sourceMapUrl[0] === "/" || sourceMapUrl.startsWith("data:") || PROTOCOL_REGEXP.test(sourceMapUrl)) {
+        return `/*# sourceMappingURL=${sourceMapUrl} */`;
+      }
+      const {
+        pathname: resolvedSourceMapUrl
+      } = new URL(sourceMapUrl, absoluteBaseHrefUrl);
+      return `/*# sourceMappingURL=${resolvedSourceMapUrl} */`;
+    });
+  });
 }
 var DomRendererFactory2 = class _DomRendererFactory2 {
   eventManager;
@@ -553,14 +575,15 @@ var DomRendererFactory2 = class _DomRendererFactory2 {
       const sharedStylesHost = this.sharedStylesHost;
       const removeStylesOnCompDestroy = this.removeStylesOnCompDestroy;
       const platformIsServer = this.platformIsServer;
+      const tracingService = this.tracingService;
       switch (type.encapsulation) {
         case ViewEncapsulation.Emulated:
-          renderer = new EmulatedEncapsulationDomRenderer2(eventManager, sharedStylesHost, type, this.appId, removeStylesOnCompDestroy, doc, ngZone, platformIsServer, this.tracingService);
+          renderer = new EmulatedEncapsulationDomRenderer2(eventManager, sharedStylesHost, type, this.appId, removeStylesOnCompDestroy, doc, ngZone, platformIsServer, tracingService);
           break;
         case ViewEncapsulation.ShadowDom:
-          return new ShadowDomRenderer(eventManager, sharedStylesHost, element, type, doc, ngZone, this.nonce, platformIsServer, this.tracingService);
+          return new ShadowDomRenderer(eventManager, sharedStylesHost, element, type, doc, ngZone, this.nonce, platformIsServer, tracingService);
         default:
-          renderer = new NoneEncapsulationDomRenderer(eventManager, sharedStylesHost, type, removeStylesOnCompDestroy, doc, ngZone, platformIsServer, this.tracingService);
+          renderer = new NoneEncapsulationDomRenderer(eventManager, sharedStylesHost, type, removeStylesOnCompDestroy, doc, ngZone, platformIsServer, tracingService);
           break;
       }
       rendererByCompId.set(type.id, renderer);
@@ -802,7 +825,12 @@ var ShadowDomRenderer = class extends DefaultDomRenderer2 {
       mode: "open"
     });
     this.sharedStylesHost.addHost(this.shadowRoot);
-    const styles = shimStylesContent(component.id, component.styles);
+    let styles = component.styles;
+    if (ngDevMode) {
+      const baseHref = getDOM().getBaseHref(doc) ?? "";
+      styles = addBaseHrefToCssSourceMap(baseHref, styles);
+    }
+    styles = shimStylesContent(component.id, styles);
     for (const style of styles) {
       const styleEl = document.createElement("style");
       if (nonce) {
@@ -850,7 +878,12 @@ var NoneEncapsulationDomRenderer = class extends DefaultDomRenderer2 {
     super(eventManager, doc, ngZone, platformIsServer, tracingService);
     this.sharedStylesHost = sharedStylesHost;
     this.removeStylesOnCompDestroy = removeStylesOnCompDestroy;
-    this.styles = compId ? shimStylesContent(compId, component.styles) : component.styles;
+    let styles = component.styles;
+    if (ngDevMode) {
+      const baseHref = getDOM().getBaseHref(doc) ?? "";
+      styles = addBaseHrefToCssSourceMap(baseHref, styles);
+    }
+    this.styles = compId ? shimStylesContent(compId, styles) : styles;
     this.styleUrls = component.getExternalStyles?.(compId);
   }
   applyStyles() {
@@ -1932,7 +1965,7 @@ function provideClientHydration(...features) {
   }
   return makeEnvironmentProviders([typeof ngDevMode !== "undefined" && ngDevMode ? provideZoneJsCompatibilityDetector() : [], withDomHydration(), featuresKind.has(HydrationFeatureKind.NoHttpTransferCache) || hasHttpTransferCacheOptions ? [] : withHttpTransferCache({}), providers]);
 }
-var VERSION = new Version("19.1.2");
+var VERSION = new Version("19.1.4");
 
 export {
   BrowserDomAdapter,
@@ -1977,9 +2010,9 @@ export {
 
 @angular/platform-browser/fesm2022/platform-browser.mjs:
   (**
-   * @license Angular v19.1.2
+   * @license Angular v19.1.4
    * (c) 2010-2024 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-QLGOH45Q.js.map
+//# sourceMappingURL=chunk-RT3ITFMY.js.map

@@ -1,2 +1,34 @@
 # VSCode settings
 .vscode/
+
+# Node.js dependencies
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn.lock
+yarn-error.log
+
+# Angular build outputs
+dist/
+out-tsc/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs and temporary files
+logs/
+*.log
+tmp/
+coverage/
+.DS_Store
+
+# Environment variables
+.env
+.env.local
+.env.*.local

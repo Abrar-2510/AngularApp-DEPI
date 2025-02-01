@@ -9,9 +9,10 @@ export class BackendService {
 
   constructor(private http:HttpClient) { }
 
-  private API_URL = 'http://172.20.42.150:3000'
+  private API_URL = 'http://44.202.120.118:3000'
 
-  getMessage(): Observable<{ message: string }> {
-    return this.http.get<{ message: string }>(`${this.API_URL}`);
+  getMessage(): Observable<{ message: string; dbStatus: string }> {
+    return this.http.get<{ message: string; dbStatus: string }>(`${this.API_URL}`);
   }
+  
 }
