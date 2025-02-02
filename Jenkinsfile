@@ -43,8 +43,8 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    sh 'docker build -t frontend-app -f angular-app/frontend/Dockerfile .'
-                    sh 'docker build -t backend-app -f angular-app/backend/Dockerfile .'
+                    sh 'docker build -t frontend-app -f angular-app/frontend/Dockerfile angular-app/frontend'
+                    sh 'docker build -t backend-app -f angular-app/backend/Dockerfile angular-app/backend'
                 }
             }
         }
