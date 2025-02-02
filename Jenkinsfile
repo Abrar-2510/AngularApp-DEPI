@@ -20,13 +20,11 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 script {
-                    docker.image('node:18').inside {
-                        sh '''
-                        cd frontend
-                        npm install
-                        npm run build --prod
-                        '''
-                    }
+                    sh '''
+                    cd angular-app/frontend
+                    npm install
+                    npm run build --prod
+                    '''
                 }
             }
         }
@@ -34,12 +32,10 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    docker.image('node:16').inside {
-                        sh '''
-                        cd backend
-                        npm install
-                        '''
-                    }
+                    sh '''
+                    cd angular-app/backend
+                    npm install
+                    '''
                 }
             }
         }
@@ -47,8 +43,8 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    sh 'docker build -t frontend-app -f frontend/Dockerfile .'
-                    sh 'docker build -t backend-app -f backend/Dockerfile .'
+                    sh 'docker build -t frontend-app -f angular-app/frontend/Dockerfile .'
+                    sh 'docker build -t backend-app -f angular-app/backend/Dockerfile .'
                 }
             }
         }
