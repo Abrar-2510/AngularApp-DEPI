@@ -43,8 +43,8 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 script {
-                    sh 'docker build -t frontend-app -f angular-app/frontend/Dockerfile ./angular-app/frontend'
-                    sh 'docker build -t backend-app -f angular-app/backend/Dockerfile ./angular-app/backend'
+                    sh 'docker build -t frontend-app -f angular-app/frontend/Dockerfile .'
+                    sh 'docker build -t backend-app -f angular-app/backend/Dockerfile .'
                 }
             }
         }
@@ -52,7 +52,7 @@ pipeline {
         stage('Run Application') {
             steps {
                 script {
-                    sh 'docker-compose up -d'
+                    sh 'docker-compose -f angular-app/docker-compose.yml up -d'
                 }
             }
         }

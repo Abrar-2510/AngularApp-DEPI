@@ -35,13 +35,13 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 │   └── backend-service.yaml        # Kubernetes YAML for backend service
 │   └── mysql-deployment.yaml       # Kubernetes YAML for MySQL deployment
 │
-├── depi-angular-app/
+├── angular-app/
 │   ├── Dockerfile-frontend         # Dockerfile for Frontend (Multi-stage)
 │   ├── Dockerfile-backend          # Dockerfile for Backend
 │   ├── docker-compose.yml          # Docker Compose file for local deployment
 │
-├── jenkins/
-│   ├── Jenkinsfile                 # Jenkins pipeline for building and pushing Docker images
+├── Jenkinsfile                     # Jenkins pipeline for building and pushing Docker images
+│                   
 │
 └── README.md                       # Project Documentation
 ```
@@ -150,3 +150,10 @@ kubectl get ingress
 ![run](diagrams/run.jpg)
 ![angular app](diagrams/angular%20appjpg.jpg)
 ![jenkinsS](diagrams/angular%20appjpg.jpg)
+
+### Git Push from Jenkins
+![jenkinsS](diagrams/1.jpg)
+
+This image captures the Jenkins pipeline stage where code changes are pushed to the Git repository, ensuring version control.
+###  Jenkins pipeline
+![jenkinsS](diagrams/2.jpg)
