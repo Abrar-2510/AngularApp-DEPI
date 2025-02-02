@@ -18,30 +18,28 @@ pipeline {
         }
         
         stage('Build Frontend') {
-            agent {
-                docker { image 'node:18' }
-            }
             steps {
                 script {
-                    sh '''
-                    cd frontend
-                    npm install
-                    npm run build --prod
-                    '''
+                    docker.image('node:18').inside {
+                        sh '''
+                        cd frontend
+                        npm install
+                        npm run build --prod
+                        '''
+                    }
                 }
             }
         }
         
         stage('Build Backend') {
-            agent {
-                docker { image 'node:16' }
-            }
             steps {
                 script {
-                    sh '''
-                    cd backend
-                    npm install
-                    '''
+                    docker.image('node:16').inside {
+                        sh '''
+                        cd backend
+                        npm install
+                        '''
+                    }
                 }
             }
         }
