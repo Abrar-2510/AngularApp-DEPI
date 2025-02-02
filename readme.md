@@ -149,7 +149,6 @@ kubectl get ingress
 ![php](diagrams/php.jpg)
 ![run](diagrams/run.jpg)
 ![angular app](diagrams/angular%20appjpg.jpg)
-![jenkinsS](diagrams/angular%20appjpg.jpg)
 
 ### Git Push from Jenkins
 ![jenkinsS](diagrams/1.jpg)
