@@ -2,9 +2,9 @@
 FROM node:18 AS build
 
 WORKDIR /app
-COPY frontend/package*.json ./
+COPY ./frontend/package*.json ./
 RUN npm install
-COPY ./frontend/ ./
+COPY ./frontend ./
 RUN npm run build --prod
 
 # Stage 2: Serve the app using Nginx
