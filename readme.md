@@ -155,4 +155,4 @@ kubectl get ingress
 
 This image captures the Jenkins pipeline stage where code changes are pushed to the Git repository, ensuring version control.
 ###  Jenkins pipeline
-![jenkinsS](diagrams/2.jpg)
+![jenkinsS](diagrams/2jpg.jpg)

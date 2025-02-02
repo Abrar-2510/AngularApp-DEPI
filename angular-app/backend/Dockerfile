@@ -1,9 +1,9 @@
 FROM node:16
 
 WORKDIR /app
-COPY ./backend/package*.json ./
+COPY angular-app/backend/package*.json ./
 RUN npm install
-COPY ./backend/ ./
+COPY angular-app/backend/ ./
 EXPOSE 3000
 # Start the application
 CMD ["node", "server.js"]
