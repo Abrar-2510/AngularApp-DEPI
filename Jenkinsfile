@@ -18,7 +18,9 @@ pipeline {
         }
         
         stage('Build Frontend') {
-            agent { docker { image 'node:18' } }
+            agent {
+                docker { image 'node:18' }
+            }
             steps {
                 script {
                     sh '''
@@ -31,7 +33,9 @@ pipeline {
         }
         
         stage('Build Backend') {
-            agent { docker { image 'node:16' } }
+            agent {
+                docker { image 'node:16' }
+            }
             steps {
                 script {
                     sh '''

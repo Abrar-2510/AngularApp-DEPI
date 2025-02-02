@@ -1,6 +1,6 @@
 ## Kubernetes Application Deployment with Ansible
 
-This project automates the provisioning of a Kubernetes cluster with **1 master node** and **1 worker node** on aws. It also sets up a 3-tier application (Frontend, Backend, and MySQL) with Kubernetes and exposes the Angular app using NGINX Ingress Controller. The project leverages **Ansible** for automation and **Docker** for containerization.
+This project automates the provisioning of a Kubernetes cluster with **1 master node** and **1 worker node** on AWS. It also sets up a 3-tier application (Frontend, Backend, and MySQL) with Kubernetes and exposes the Angular app using NGINX Ingress Controller. The project leverages **Ansible** for automation, **Docker** for containerization, and **Jenkins** for automating Docker image builds and pushes.
 
 ---
 
@@ -12,7 +12,7 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 
 ├── ansible/
 │   ├── play.yml                # Ansible playbook for provisioning and deploying the application
-│   ├── inventory.ini               # Inventory file with master and worker node details
+│   ├── inventory.ini           # Inventory file with master and worker node details
 |   ├── ansible.cfg
     ├── secrets.yml
 │   ├── roles/
@@ -40,9 +40,11 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 │   ├── Dockerfile-backend          # Dockerfile for Backend
 │   ├── docker-compose.yml          # Docker Compose file for local deployment
 │
+├── jenkins/
+│   ├── Jenkinsfile                 # Jenkins pipeline for building and pushing Docker images
+│
 └── README.md                       # Project Documentation
 ```
-
 
 ### **High-Level Architecture:**
 
@@ -58,8 +60,11 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 3. **Ingress Controller:**
    - Exposes the Angular app to clients over HTTP/HTTPS using NGINX Ingress.
 
-4. **Docker Registry (Bonus):**
+4. **Docker Registry:**
    - Private Docker registry is set up to host Docker images securely.
+
+5. **Jenkins (CI/CD for Docker):**
+   - Jenkins pipeline automates the building and pushing of Docker images to a container registry.
 
 ### **Project Components:**
 
@@ -70,9 +75,10 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 2. **Kubernetes Resources** (`k8s/`):
    - Kubernetes YAML files for services, deployments, and Ingress.
 
-3. **Docker**:
+3. **Docker & Jenkins:**
    - Multi-stage Dockerfiles for both frontend and backend applications.
    - Docker Compose file for local development of the 3-tier application.
+   - Jenkins pipeline to automate Docker image builds and pushes.
 
 ---
 
@@ -107,7 +113,6 @@ To ensure that your Kubernetes cluster and application are accessible, configure
 
 ---
 
-
 ### **Steps**:
 1. **Install Docker** on your registry server.
 2. **Configure the Docker Registry** using the `docker registry` command.
@@ -124,22 +129,24 @@ Run the following Ansible command to provision the Kubernetes cluster with 1 mas
 ```bash
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yml 
 ```
-### **Step 2: U can Run Your Angular Application (locally)**
+### **Step 2: Run Your Angular Application (locally)**
 
 ```bash
 ng serve --open
 ```
-### **Step 3: U can Run Your Angular Application (externally)**
+### **Step 3: Run Your Angular Application (externally)**
 
 ```bash
 kubectl get ingress
 ```
 
-## project screens connected
+---
+
+## Project Screens Connected
 
 ![nginx](diagrams/nginx.jpg)
-![nginx](diagrams/db.jpg)
-![nginx](diagrams/php.jpg)
-![nginx](diagrams/run.jpg)
-![nginx](diagrams/angular%20appjpg.jpg)
-
+![db](diagrams/db.jpg)
+![php](diagrams/php.jpg)
+![run](diagrams/run.jpg)
+![angular app](diagrams/angular%20appjpg.jpg)
+![jenkinsS](diagrams/angular%20appjpg.jpg)
