@@ -6,7 +6,7 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 
 ## Project Structure
 
-![Kubernetes Architecture](diagrams/Untitled%20Diagram.drawio%20(3).png)
+![Kubernetes Architecture](diagrams/final.drawio.png)
 
 ```bash
 
@@ -137,7 +137,6 @@ kubectl get ingress
 
 ## project screens connected
 
-![nginx](diagrams/run.jpg)
 ![nginx](diagrams/nginx.jpg)
 ![nginx](diagrams/db.jpg)
 ![nginx](diagrams/php.jpg)
