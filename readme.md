@@ -46,6 +46,7 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 └── README.md                       # Project Documentation
 ```
 
+
 ### **High-Level Architecture:**
 
 1. **Kubernetes Cluster:**
