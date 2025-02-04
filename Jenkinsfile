@@ -7,7 +7,8 @@ pipeline {
         DB_USER = 'root'
         DB_PASSWORD = 'rootpassword'
     }
-    
+
+
     stages {
         stage('Checkout Code') {
             steps {
