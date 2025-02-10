@@ -1,23 +1,56 @@
 ---
-- name: Install Kubernetes packages on master
-  package:
-    name:
-      - kubelet
-      - kubeadm
-      - kubectl
-    state: present
-  when: ansible_facts['os_family'] == 'Debian'
 
-- name: Initialize Kubernetes master node
-  command: kubeadm init --pod-network-cidr=10.244.0.0/16
-  register: kubeadm_init
-  when: kubeadm_init is not defined
-
-- name: Set up kubeconfig for master node
+- name: Create kubeadm config file
   copy:
-    dest: "{{ ansible_env.HOME }}/.kube/config"
-    content: "{{ lookup('file', '/etc/kubernetes/admin.conf') }}"
-    mode: 0600
+    dest: /etc/kubernetes/kubeadm-config.yaml
+    content: |
+      kind: ClusterConfiguration
+      apiVersion: kubeadm.k8s.io/v1beta3
+      networking:
+        podSubnet: "10.244.0.0/16"
+      ---
+      kind: KubeletConfiguration
+      apiVersion: kubelet.config.k8s.io/v1beta1
+      runtimeRequestTimeout: "15m"
+      cgroupDriver: "systemd"
+      systemReserved:
+        cpu: 100m
+        memory: 350M
+      kubeReserved:
+        cpu: 100m
+        memory: 50M
+      enforceNodeAllocatable:
+      - pods
 
-- name: Apply Flannel CNI for networking
-  command: kubectl apply -f /tmp/kube-flannel.yml
+- name: Initialize the cluster
+  shell: kubeadm init --config /etc/kubernetes/kubeadm-config.yaml
+  args:
+    creates: /etc/kubernetes/admin.conf
+
+- name: Create .kube directory
+  file:
+    path: /home/ubuntu/.kube
+    state: directory
+    mode: 0755
+  become_user: ubuntu
+
+- name: Copy admin.conf to user's kube config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/ubuntu/.kube/config
+    remote_src: yes
+    owner: ubuntu
+
+- name: Install Pod network (Flannel)
+  become_user: ubuntu
+  shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+  args:
+    creates: /home/ubuntu/pod_network_setup.log
+
+- name: Generate join command
+  shell: kubeadm token create --print-join-command
+  register: join_command_raw
+
+- name: Set join command
+  set_fact:
+    join_command: "{{ join_command_raw.stdout_lines[0] }}"

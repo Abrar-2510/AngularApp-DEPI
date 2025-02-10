@@ -1,13 +1,11 @@
 ---
-- name: Install Kubernetes packages on worker
-  package:
-    name:
-      - kubelet
-      - kubeadm
-      - kubectl
-    state: present
-  when: ansible_facts['os_family'] == 'Debian'
+- name: Wait for master API to be reachable
+  wait_for:
+    host: "{{ hostvars['k8s-master-1']['ansible_default_ipv4']['address'] }}"
+    port: 6443
+    timeout: 30
 
-- name: Join worker node to master
-  command: kubeadm join {{ hostvars['master']['kubeadm_init'].stdout_lines | last }} --token {{ master_token }} --discovery-token-ca-cert-hash sha256:{{ discovery_token_hash }}
-  when: ansible_facts['os_family'] == 'Debian' and ansible_hostname != 'master'
+- name: Join the cluster
+  shell: "{{ hostvars['k8s-master-1'].join_command }} >> /home/ubuntu/node_joined.log"
+  args:
+    creates: /home/ubuntu/node_joined.log

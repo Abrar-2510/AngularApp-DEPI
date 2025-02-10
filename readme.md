@@ -1,6 +1,7 @@
-## Kubernetes Application Deployment with Ansible
 
-This project automates the provisioning of a Kubernetes cluster with **1 master node** and **1 worker node** on AWS. It also sets up a 3-tier application (Frontend, Backend, and MySQL) with Kubernetes and exposes the Angular app using NGINX Ingress Controller. The project leverages **Ansible** for automation, **Docker** for containerization, and **Jenkins** for automating Docker image builds and pushes.
+## Kubernetes Application Deployment with Ansible and Helm
+
+This project automates the provisioning of a Kubernetes cluster with **1 master node** and **1 worker node** on AWS. It also sets up a 3-tier application (Frontend, Backend, and MySQL) with Kubernetes and exposes the Angular app using NGINX Ingress Controller. The project leverages **Ansible** for automation, **Docker** for containerization, **Helm** for Kubernetes package management, and **Jenkins** for automating Docker image builds and pushes.
 
 ---
 
@@ -8,43 +9,6 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 
 ![Kubernetes Architecture](diagrams/final.drawio.png)
 
-```bash
-
-├── ansible/
-│   ├── play.yml                # Ansible playbook for provisioning and deploying the application
-│   ├── inventory.ini           # Inventory file with master and worker node details
-|   ├── ansible.cfg
-    ├── secrets.yml
-│   ├── roles/
-│   │   ├── master/                 # Role for master node setup
-│   │   │   ├── tasks/
-│   │   │   │   └── main.yml        # Tasks to configure the master node
-│   │   ├── worker/                 # Role for worker node setup
-│   │   │   ├── tasks/
-│   │   │   │   └── main.yml        # Tasks to configure the worker node
-│   │   ├── common/                 # Common tasks for all nodes
-│   │   │   ├── tasks/
-│   │   │   │   └── main.yml        # Common tasks like installing kubectl    
-│
-├── k8s/                            # Directory containing all Kubernetes resources (YAML)
-│   ├── frontend-service.yaml       # Kubernetes Service for Frontend
-│   ├── frontend-ingress.yaml       # Ingress to expose Frontend
-│   └── mysql-pvc.yaml              # Persistent Volume Claim for MySQL
-|   ├── frontend-service.yaml       # Kubernetes YAML for frontend service
-│   ├── frontend-ingress.yaml       # Kubernetes YAML for frontend ingress
-│   └── backend-service.yaml        # Kubernetes YAML for backend service
-│   └── mysql-deployment.yaml       # Kubernetes YAML for MySQL deployment
-│
-├── angular-app/
-│   ├── Dockerfile-frontend         # Dockerfile for Frontend (Multi-stage)
-│   ├── Dockerfile-backend          # Dockerfile for Backend
-│   ├── docker-compose.yml          # Docker Compose file for local deployment
-│
-├── Jenkinsfile                     # Jenkins pipeline for building and pushing Docker images
-│                   
-│
-└── README.md                       # Project Documentation
-```
 
 ### **High-Level Architecture:**
 
@@ -57,28 +21,19 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
    - **Backend**: API server that interacts with the frontend and the database.
    - **MySQL**: Database service to store data.
 
-3. **Ingress Controller:**
+3. **Helm Deployment:**
+   - Manages Kubernetes resources efficiently using Helm templates.
+   - Simplifies updates, rollbacks, and configuration management.
+
+4. **Ingress Controller:**
    - Exposes the Angular app to clients over HTTP/HTTPS using NGINX Ingress.
 
-4. **Docker Registry:**
+5. **Docker Registry:**
    - Private Docker registry is set up to host Docker images securely.
 
-5. **Jenkins (CI/CD for Docker):**
+6. **Jenkins (CI/CD for Docker & Helm):**
    - Jenkins pipeline automates the building and pushing of Docker images to a container registry.
-
-### **Project Components:**
-
-1. **Ansible Playbook** (`ansible/playbook.yml`): 
-   - Automates the setup of Kubernetes on both master and worker nodes.
-   - Deploys the 3-tier application and configures Ingress to expose the Angular frontend.
-
-2. **Kubernetes Resources** (`k8s/`):
-   - Kubernetes YAML files for services, deployments, and Ingress.
-
-3. **Docker & Jenkins:**
-   - Multi-stage Dockerfiles for both frontend and backend applications.
-   - Docker Compose file for local development of the 3-tier application.
-   - Jenkins pipeline to automate Docker image builds and pushes.
+   - Automates Helm deployments to Kubernetes.
 
 ---
 
@@ -113,15 +68,7 @@ To ensure that your Kubernetes cluster and application are accessible, configure
 
 ---
 
-### **Steps**:
-1. **Install Docker** on your registry server.
-2. **Configure the Docker Registry** using the `docker registry` command.
-3. **Push the Docker Images** (e.g., frontend and backend images) to the registry.
-4. **Configure Kubernetes to pull images** from your private registry using secrets or service accounts.
-
----
-
-## **How to Use This Project**
+## **Deploying with Ansible and Helm**
 
 ### **Step 1: Setup Kubernetes Cluster with Ansible**
 Run the following Ansible command to provision the Kubernetes cluster with 1 master and 1 worker node:
@@ -129,18 +76,203 @@ Run the following Ansible command to provision the Kubernetes cluster with 1 mas
 ```bash
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yml 
 ```
-### **Step 2: Run Your Angular Application (locally)**
 
-```bash
-ng serve --open
+
+---
+
+## ✅ Benefits of Using Helm
+
+### 1️⃣ **Parameterization & Reusability**  
+- Avoid hardcoding values inside YAML files.
+- Instead of writing `image: backend:v1.0` in `deployment.yaml`, use:
+  ```yaml
+  image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+  ```
+- Deploy **different versions** or **environments (dev/staging/prod)** using Helm values.
+
+
+
+### 3️⃣ **Templating for Customization**  
+- Instead of managing **separate YAML files for different environments**, pass values dynamically:
+  ```sh
+  helm upgrade --install angularapp helm-chart --set backend.image.tag=latest
+  ```
+- Easily update configurations (scaling, ports, environment variables) without editing YAML manually.
+
+---
+
+
+### 4️⃣ **Rollback & Version Control**  
+- If a deployment fails, quickly roll back:
+  ```sh
+  helm rollback angularapp 1
+  ```
+- Kubernetes alone **does not track versions** as easily as Helm.
+
+---
+
+### 5️⃣ **Easier CI/CD Integration**  
+- In Jenkins, instead of manually applying `.yml` files, use a **single Helm command**.
+- Automate versioning:
+  ```sh
+  helm upgrade --install angularapp helm-chart --set backend.image.tag=$BUILD_NUMBER
+  ```
+
+---
+
+
+## 🚀 Deploying with Helm
+
+```sh
+helm create helm-chart
 ```
-### **Step 3: Run Your Angular Application (externally)**
+Modify `helm-chart/values.yaml` to store configurable values.
 
-```bash
-kubectl get ingress
+---
+
+```sh
+helm upgrade --install angularapp helm-chart --namespace angularapp --create-namespace
+```
+
+For rollbacks:
+```sh
+helm rollback angularapp 1
+```
+
+
+---
+
+## 🎯 Conclusion
+✅ **Helm makes Kubernetes deployments easier, reusable, and CI/CD-friendly!**  
+🚀 **Delete raw Kubernetes YAML files and use Helm instead.**  
+🔹 **Use `values.yaml` instead of hardcoding values.**  
+🔹 **Deploy with `helm upgrade --install` instead of applying YAML manually.**  
+
+
+
+
+To **deploy and access your application on** `angularapp.example.com`, follow these **step-by-step** Helm and Kubernetes commands:  
+
+---
+
+### **1️⃣ Deploy the Helm Chart**
+Run the following **Helm command** to install or update your application with the `values.yml` file:
+```sh
+helm upgrade --install angularapp ./angularapp-chart -f angularapp-chart/values.yaml -n angularapp
+```
+🔹 **Why?** This ensures that **all resources** (Frontend, Backend, MySQL, Ingress, PVC) are deployed correctly.
+
+---
+
+### **2️⃣ Verify that All Pods are Running**
+Check the status of your Kubernetes pods:
+```sh
+kubectl get pods -n angularapp
+```
+🔹 **Why?** This ensures that your frontend, backend, and MySQL services are running.
+
+If any pods are stuck in `CrashLoopBackOff` or `Pending`, check logs:
+```sh
+kubectl logs <POD_NAME> -n angularapp
+```
+or describe the pod:
+```sh
+kubectl describe pod <POD_NAME> -n angularapp
 ```
 
 ---
+
+### **3️⃣ Verify Ingress and Service**
+Check if your **Ingress Controller** is running:
+```sh
+kubectl get pods -n angularapp | grep nginx-ingress-controller
+```
+If the **Ingress Controller** is missing, deploy **NGINX Ingress** (if not already installed):
+```sh
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.service.type=LoadBalancer
+```
+---
+
+### **4️⃣ Check the Ingress Resource**
+To verify that your **Ingress is created**, run:
+```sh
+kubectl get ingress -n angularapp
+```
+You should see an output like:
+```
+NAME                 CLASS    HOSTS                    ADDRESS        PORTS   AGE
+angularapp-ingress   <none>   angularapp.example.com   <EXTERNAL-IP>  80      10m
+```
+🔹 **Why?** This confirms that your `angularapp-ingress` is available.
+
+---
+
+### **5️⃣ Get the External IP**
+If using a **LoadBalancer**, find its external IP:
+```sh
+kubectl get svc -n angularapp
+```
+Look for the `nginx-ingress-service` external IP.
+
+If it's `pending`, use:
+```sh
+kubectl get svc -n ingress-nginx
+```
+🔹 **Why?** You need the IP to update DNS.
+
+---
+
+### **6️⃣ Update Your `/etc/hosts` File (For Local Testing)**
+If you don't have a **public DNS** setup, you can manually map the hostname:
+```sh
+sudo nano /etc/hosts
+```
+Add this line (replace `<EXTERNAL-IP>` with the Ingress service IP):
+```
+<EXTERNAL-IP> angularapp.example.com
+```
+Save and exit.
+
+---
+
+### **7️⃣ Access the Application**
+Now, open your browser and visit:
+```
+http://angularapp.example.com  
+```
+🔹 **Why?** This should now correctly route traffic via NGINX Ingress to your frontend.
+### **Step 6: Debugging Issues**
+
+#### **Check Pod Logs**
+```bash
+kubectl logs <POD_NAME> -n angularapp
+```
+
+#### **Check Service and Endpoint Mapping**
+```bash
+kubectl get svc -n angularapp
+kubectl get endpoints -n angularapp
+```
+
+#### **Check Ingress Logs**
+```bash
+kubectl logs -n ingress-nginx -l app.kubernetes.io/name=ingress-nginx
+```
+
+#### **Ensure Backend is Reachable from Frontend**
+```bash
+kubectl exec -it <FRONTEND_POD_NAME> -n angularapp -- curl -I http://backend-service:3000
+```
+
+---
+
+## 🎯 **Conclusion**
+✅ **Use Ansible to set up the Kubernetes cluster**  
+✅ **Deploy applications efficiently with Helm**  
+✅ **Use `helm upgrade --install` instead of applying raw YAML files manually**  
+✅ **Monitor and debug with `kubectl get pods`, `kubectl logs`, and `kubectl get ingress`**  
 
 ## Project Screens Connected
 
@@ -156,3 +288,4 @@ kubectl get ingress
 This image captures the Jenkins pipeline stage where code changes are pushed to the Git repository, ensuring version control.
 ###  Jenkins pipeline
 ![jenkinsS](diagrams/2jpg.jpg)
+

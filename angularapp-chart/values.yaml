@@ -1,0 +1,35 @@
+frontend:
+  image:
+    repository: abrar2510/angularapp
+    tag: frontend-latest
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 80
+    nodePort: 30080  # Ensure valid NodePort range
+
+
+backend:
+  image:
+    repository: abrar2510/angularapp
+    tag: backend-latest
+  service:
+    type: NodePort
+    port: 3000
+    targetPort: 3000
+    nodePort: 30301
+
+mysql:
+  rootPassword: rootpassword
+  database: appdb
+  user: root
+  password: rootpassword
+  service:
+    type: ClusterIP
+    port: 3306
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80

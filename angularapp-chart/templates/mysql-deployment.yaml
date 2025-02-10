@@ -15,11 +15,13 @@ spec:
       containers:
       - name: mysql
         image: mysql:5.7
-        environment:
-          - name: "{{ mysql_root_password }}"
-            value: "{{ mysql_database }}"
-          - name: "{{ mysql_database }}"
-            value: "appdb"
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "{{ .Values.mysql.rootPassword }}"
+          - name: MYSQL_DATABASE
+            value: "{{ .Values.mysql.database }}"
+          - name: MYSQL_PASSWORD
+            value: "{{ .Values.mysql.password }}"
         ports:
           - containerPort: 3306
         volumeMounts:
@@ -29,4 +31,3 @@ spec:
         - name: mysql-data
           persistentVolumeClaim:
             claimName: mysql-pvc
-
