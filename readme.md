@@ -7,7 +7,7 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
 
 ## Project Structure
 
-![Kubernetes Architecture](diagrams/final.drawio.png)
+![Kubernetes Architecture](diagrams/Screenshot%202025-02-10%20234427.png)
 
 
 ### **High-Level Architecture:**

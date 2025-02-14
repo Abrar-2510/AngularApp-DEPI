@@ -11,6 +11,7 @@ pipeline {
         BACKEND_IMAGE = 'abrar2510/angularapp'
         BACKEND_TAG = 'backend-latest'
         KUBERNETES_NAMESPACE = 'angularapp'
+        SLACK_WEBHOOK_URL =  "https://*******"
     }
     
     stages {
@@ -88,6 +89,23 @@ pipeline {
                         --set autoscaling.targetCPUUtilizationPercentage=80
                     '''
                 }
+            }
+        }
+    }
+    
+    post {
+        success {
+            script {
+                sh """
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"Jenkins Pipeline: Deployment successful! :white_check_mark:"}' $SLACK_WEBHOOK_URL
+                """
+            }
+        }
+        failure {
+            script {
+                sh """
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"Jenkins Pipeline: Deployment failed! :x:"}' $SLACK_WEBHOOK_URL
+                """
             }
         }
     }
