@@ -1,7 +1,48 @@
+# RBAC: ClusterRoleBinding for nginx-ingress-controller
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: nginx-ingress-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nginx-ingress-clusterrole
+subjects:
+  - kind: ServiceAccount
+    name: nginx-ingress-controller
+    namespace: angularapp
+---
+# ServiceAccount for nginx-ingress-controller
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-ingress-controller
+  namespace: angularapp
+---
+# Service for nginx-ingress-controller
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress-controller-service
+  namespace: angularapp
+spec:
+  type: LoadBalancer
+  selector:
+    app: nginx-ingress-controller
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+    - name: https
+      port: 443
+      targetPort: 443
+---
+# Deployment for nginx-ingress-controller
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-ingress-controller
+  namespace: angularapp
 spec:
   replicas: 1
   selector:
@@ -12,6 +53,7 @@ spec:
       labels:
         app: nginx-ingress-controller
     spec:
+      serviceAccountName: nginx-ingress-controller
       containers:
         - name: nginx-ingress-controller
           image: registry.k8s.io/ingress-nginx/controller:v1.9.4

@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    
+
     environment {
         MYSQL_ROOT_PASSWORD = 'rootpassword'
         DB_NAME = 'appdb'
@@ -11,9 +11,9 @@ pipeline {
         BACKEND_IMAGE = 'abrar2510/angularapp'
         BACKEND_TAG = 'backend-latest'
         KUBERNETES_NAMESPACE = 'angularapp'
-        SLACK_WEBHOOK_URL =  "https://*******"
+        SLACK_WEBHOOK_URL = "https://hooks.slack.com/services/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"
     }
-    
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -22,7 +22,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build Frontend') {
             steps {
                 script {
@@ -34,7 +34,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Build Backend') {
             steps {
                 script {
@@ -45,21 +45,31 @@ pipeline {
                 }
             }
         }
-        
+
+        stage('Docker Login') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                        sh 'echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin'
+                    }
+                }
+            }
+        }
+
         stage('Build and Push Docker Images') {
             steps {
                 script {
                     sh '''
-                    docker build -t $FRONTEND_IMAGE:$FRONTEND_TAG -f angular-app/frontend/Dockerfile angular-app/frontend
+                    docker build -t $FRONTEND_IMAGE:$FRONTEND_TAG -f angular-app/frontend/Dockerfile .
                     docker push $FRONTEND_IMAGE:$FRONTEND_TAG
-                    
-                    docker build -t $BACKEND_IMAGE:$BACKEND_TAG -f angular-app/backend/Dockerfile angular-app/backend
+
+                    docker build -t $BACKEND_IMAGE:$BACKEND_TAG -f angular-app/backend/Dockerfile .
                     docker push $BACKEND_IMAGE:$BACKEND_TAG
                     '''
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes using Helm') {
             steps {
                 script {
@@ -92,19 +102,19 @@ pipeline {
             }
         }
     }
-    
+
     post {
         success {
             script {
                 sh """
-                curl -X POST -H 'Content-type: application/json' --data '{"text":"Jenkins Pipeline: Deployment successful! :white_check_mark:"}' $SLACK_WEBHOOK_URL
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"Jenkins Pipeline: Deployment successful! ✅"}' $SLACK_WEBHOOK_URL
                 """
             }
         }
         failure {
             script {
                 sh """
-                curl -X POST -H 'Content-type: application/json' --data '{"text":"Jenkins Pipeline: Deployment failed! :x:"}' $SLACK_WEBHOOK_URL
+                curl -X POST -H 'Content-type: application/json' --data '{"text":"Jenkins Pipeline: Deployment failed! ❌"}' $SLACK_WEBHOOK_URL
                 """
             }
         }

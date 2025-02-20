@@ -1,0 +1,17 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: nginx-ingress-clusterrole
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "endpoints", "nodes", "pods", "secrets", "events"]
+    verbs: ["get", "list", "watch", "create", "patch"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "list", "watch", "create", "update"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses", "ingresses/status", "ingressclasses"]
+    verbs: ["get", "list", "watch", "update"]
