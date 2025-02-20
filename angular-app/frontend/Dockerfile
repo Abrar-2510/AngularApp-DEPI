@@ -1,21 +1,16 @@
-# Stage 1: Build the Angular app
-FROM node:18 AS build
+
+# Stage 1: Build the Angular App
+FROM node:18 AS build-stage
 
 WORKDIR /app
 COPY angular-app/frontend/package*.json ./
 RUN npm install
 COPY angular-app/frontend ./
-RUN npm run build --prod
+
+RUN npm run build -- --configuration production --project=my-angular-app
 
 # Stage 2: Serve the app using Nginx
 FROM nginx:alpine
-
-
-# Copy built frontend from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
-
-# Expose port 80 for external access
+COPY --from=build-stage /app/dist/my-angular-app/ /usr/share/nginx/html/
 EXPOSE 80
-
-# Start Nginx server
 CMD ["nginx", "-g", "daemon off;"]
