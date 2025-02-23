@@ -8,7 +8,6 @@ frontend:
     targetPort: 80
     nodePort: 30080  # Ensure valid NodePort range
 
-
 backend:
   image:
     repository: abrar2510/angularapp
@@ -18,6 +17,9 @@ backend:
     port: 3000
     targetPort: 3000
     nodePort: 30301
+  replicas: 2  # Ensure backend scales with at least 2 pods
+  prometheus:
+    enabled: true
 
 mysql:
   rootPassword: rootpassword

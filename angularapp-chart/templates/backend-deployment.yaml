@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: backend
 spec:
-  replicas: 2
+  replicas: {{ .Values.backend.replicas }}
   selector:
     matchLabels:
       app: backend
@@ -11,6 +11,10 @@ spec:
     metadata:
       labels:
         app: backend
+      annotations:
+        prometheus.io/scrape: "true"    # Enable Prometheus scraping
+        prometheus.io/path: "/metrics"  # Define metrics endpoint
+        prometheus.io/port: "3000"      # Set port for metrics collection
     spec:
       containers:
         - name: backend
@@ -24,3 +28,15 @@ spec:
               value: "{{ .Values.mysql.password }}"
           ports:
             - containerPort: {{ .Values.backend.service.port }}
+          readinessProbe:   # Ensure the pod is ready before accepting traffic
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:    # Restart pod if it becomes unresponsive
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 15
