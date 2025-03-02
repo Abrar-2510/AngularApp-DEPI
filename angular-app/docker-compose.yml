@@ -51,11 +51,24 @@ services:
       PMA_PORT: 3306
       MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - "8000:80"
+      - "8500:80"
     depends_on:
       - mysql
     networks:
       - angular-app-network
+
+  # prometheus:
+  #   image: prom/prometheus
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/
+  #   command:
+  #     - "--config.file=/etc/prometheus/prometheus.yml"
+  #   ports:
+  #     - "9090:9090"
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - angular-app-network
 
 volumes:
   mysql-data:

@@ -70,7 +70,7 @@ app.get('/metrics', async (req, res) => {
 });
 
 // Start server
-app.listen(3000, () => {
-  console.log('Server is running on http://localhost:3000');
-  console.log('Prometheus metrics available at http://localhost:3000/metrics');
+app.listen(3200, () => {
+  console.log('Server is running on http://localhost:3200');
+  console.log('Prometheus metrics available at http://localhost:3200/metrics');
 });

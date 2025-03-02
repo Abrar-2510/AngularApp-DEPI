@@ -1,0 +1,51 @@
+---
+# My Global Config
+global:
+  scrape_interval: 15s  # Scrape every 15 seconds (default: 1 min)
+  evaluation_interval: 15s  # Evaluate rules every 15 seconds (default: 1 min)
+
+# Alertmanager Configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - localhost:9093  # Uncomment and set Alertmanager target if used
+
+# Load rules periodically according to the 'evaluation_interval'.
+rule_files:
+  - "rules.yml"
+  # Uncomment if more rule files exist
+  # - "/etc/prometheus/second_rules.yml"
+
+# Scrape Configuration
+scrape_configs:
+  # Scrape Prometheus itself
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Scrape Node Exporter for system metrics
+  - job_name: "node-exporter"
+    static_configs:
+      - targets: ["localhost:9100"]
+
+  # Scrape cAdvisor for Docker/container metrics
+  - job_name: "c-advisor-metrics"
+    static_configs:
+      - targets: ["localhost:8000"]
+
+
+  # Scrape backend (server.js metrics)
+  - job_name: "server.js-metrics"
+    static_configs:
+      - targets:
+          - "localhost:3200"
+          # Change to "backend:3200" if using Docker containers
+
+
+  
+  - job_name: "alertmanager-metrics"
+    static_configs:
+      - targets:
+          - "localhost:9093"
+        
