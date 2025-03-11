@@ -1,34 +1,19 @@
-variable  region {
-  type = string
+variable "vpc_id" {
+  description = "VPC ID where instances will be deployed"
+  type        = string
 }
 
-variable  ami  {
-  type = string
+variable "alb_sg_id" {
+  description = "Security Group ID for the ALB"
+  type        = string
 }
 
-variable  vpc_cidr  {
-  type = string
+variable "private_subnet1_id" {
+  description = "First private subnet ID"
+  type        = string
 }
 
-variable  public_subnet1_cidr  {
-  type = string
-}
-
-
-variable  public_subnet2_cidr  {
-  type = string
-}
-
-
-variable  private_subnet1_cidr  {
-  type = string
-}
-
-variable  private_subnet2_cidr  {
-  type = string
-}
-
-
-variable  ec2_instance_type  {
-  type = string
+variable "tg_http_arn" {
+  description = "Target Group ARN for HTTP"
+  type        = string
 }

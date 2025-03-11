@@ -1,20 +1,22 @@
-
 #---------------- network module ---------------------
 module "network" {
-    source = "./network"
-    vpc_cidr = var.vpc_cidr
-    public_subnet1_cidr=var.public_subnet1_cidr
-    public_subnet2_cidr=var.public_subnet2_cidr
-    private_subnet1_cidr=var.private_subnet1_cidr
-    private_subnet2_cidr=var.private_subnet2_cidr
-    region=var.region   
+  source = "./network"
 }
+
+
 
 #---------------- computing module ---------------------
 module "computing" {
-    source = "./computing"
-  source                  = "./computing"
-  ami                     = var.ami_id
-  instance_type           = var.ec2_instance_typ_id
-  region                  = var.region
+  source             = "./computing"
+  vpc_id             = module.network.vpc_id
+  alb_sg_id          = module.network.alb_sg_id
+  private_subnet1_id = module.network.private_subnet1_id
+  tg_http_arn        = module.network.tg_http_arn
+}
+
+
+#---------------- ECR module ---------------------
+
+module "storage" {
+  source = "./storage"
 }

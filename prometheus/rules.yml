@@ -1,3 +1,4 @@
+
 ---
 groups:
   - name: low-space-check-rule
@@ -56,3 +57,13 @@ groups:
     rules:
       - record: cpu:seconds
         expr: node_cpu_seconds_total{job="node-exporter"}
+
+      - alert: HighCPUUsage
+        expr: 100 * (1 - avg by(instance) (rate(node_cpu_seconds_total{mode="idle", job="node-exporter"}[2m]))) > 70
+        for: 1m
+        labels:
+          severity: warning
+          environment: prod
+        annotations:
+          description: >
+            High CPU usage detected on instance {{ .Labels.instance }}. Current usage: {{ .Value }}%

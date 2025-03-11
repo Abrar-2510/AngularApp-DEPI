@@ -32,3 +32,13 @@ coverage/
 .env
 .env.local
 .env.*.local
+# terra
+
+
+Terraform/.terraform/
+Terraform/.aws/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+.terraform.tfstate.backup
+.transferring

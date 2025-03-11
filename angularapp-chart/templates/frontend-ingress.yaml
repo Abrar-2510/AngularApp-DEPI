@@ -4,11 +4,14 @@ metadata:
   name: angularapp-ingress
   namespace: angularapp
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/healthcheck-path: /
 spec:
-  ingressClassName: nginx
+  ingressClassName: alb  # Change from nginx to alb
   rules:
-  - host: angularapp.example.com
+  - host: angularapp.com
     http:
       paths:
       - path: /

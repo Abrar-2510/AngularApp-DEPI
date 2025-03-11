@@ -1,7 +1,7 @@
 frontend:
   image:
-    repository: abrar2510/angularapp
-    tag: frontend-latest
+    repository: 438465127898.dkr.ecr.us-east-1.amazonaws.com/angular-frontend
+    tag: latest
   service:
     type: NodePort
     port: 80
@@ -10,8 +10,8 @@ frontend:
 
 backend:
   image:
-    repository: abrar2510/angularapp
-    tag: backend-latest
+    repository: 438465127898.dkr.ecr.us-east-1.amazonaws.com/angular-backend
+    tag: latest
   service:
     type: NodePort
     port: 3000

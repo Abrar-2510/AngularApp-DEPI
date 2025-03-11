@@ -1,59 +1,35 @@
 variable "region" {
-  type = string
-}
-
-variable "ami" {
-  type = string
+  default = "us-east-1"
 }
 
 variable "vpc_cidr" {
-  type = string
+  default = "10.0.0.0/16"
 }
 
 variable "public_subnet1_cidr" {
-  type = string
+  default = "10.0.1.0/24"
 }
-
 
 variable "public_subnet2_cidr" {
-  type = string
+  default = "10.0.2.0/24"
 }
 
-
 variable "private_subnet1_cidr" {
-  type = string
+  default = "10.0.3.0/24"
 }
 
 variable "private_subnet2_cidr" {
-  type = string
+  default = "10.0.4.0/24"
 }
 
+variable "ami_id" {
+  default = "ami-0c55b159cbfafe1f0"
+}
 
 variable "ec2_instance_type" {
-  type = string
+  default = "t2.micro"
 }
 
-
-
-variable "engine" {
-  type = string
-}
-variable "engine_version" {
-  type = string
-}
-variable "instance_class" {
-  type = string
-}
-
-variable "name" {
-  type = string
-}
-variable "username" {
-  type = string
-}
-variable "password" {
-  type = string
-}
-variable "parameter_group_name" {
-  type = string
+variable "ecr_repository_name" {
+  default = "angular-app"
 }

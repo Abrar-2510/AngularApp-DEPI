@@ -1,7 +1,12 @@
-
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
 
 provider "aws" {
-  region                  = var.region
-  # use env variables for credentials 
-  # Add to jenkins credentials
+  region = var.region
 }

@@ -1,6 +1,6 @@
-## Kubernetes Application Deployment with Ansible and Helm
+## Kubernetes Application Deployment with Ansible, Terraform, and Helm
 
-This project automates the provisioning of a Kubernetes cluster with **1 master node** and **1 worker node** on AWS. It also sets up a 3-tier application (Frontend, Backend, and MySQL) with Kubernetes and exposes the Angular app using NGINX Ingress Controller. The project leverages **Ansible** for automation, **Docker** for containerization, **Helm** for Kubernetes package management, and **Jenkins** for automating Docker image builds and pushes.
+This project automates the provisioning of a Kubernetes cluster with **1 master node** and **1 worker node** on AWS. It also sets up a 3-tier application (Frontend, Backend, and MySQL) with Kubernetes and exposes the Angular app using NGINX Ingress Controller. The project leverages **Ansible** for automation, **Terraform** for infrastructure provisioning, **Docker** for containerization, **Helm** for Kubernetes package management, and **Jenkins** for automating Docker image builds and pushes.
 
 ---
 
@@ -26,17 +26,25 @@ This project automates the provisioning of a Kubernetes cluster with **1 master 
    - Exposes the Angular app to clients over HTTP/HTTPS using NGINX Ingress.
 
 5. **Docker Registry:**
-   - Private Docker registry is set up to host Docker images securely.
+   - **Amazon ECR**: Stores and manages Docker images in AWS Elastic Container Registry.
 
-6. **Jenkins (CI/CD for Docker & Helm):**
+6. **Jenkins (CI/CD for Docker, ECR & Helm):**
    - GitHub webhooks trigger Jenkins pipeline.
-   - Jenkins builds Docker images, pushes them to Docker Hub, and deploys the application using Helm.
+   - Jenkins builds Docker images, pushes them to **AWS ECR**, and deploys the application using Helm.
 
 7. **Infrastructure Automation:**
    - **Terraform**: Infrastructure as code (IaC) for provisioning and managing AWS resources.
    - **Ansible**: Automates provisioning and installing Kubernetes (`kubeadm`) on nodes.
 
-8. **Monitoring & Alerts:**
+8. **Load Balancing with AWS ALB:**
+   - **AWS Application Load Balancer (ALB)** is used to distribute traffic across EC2 instances hosting the application.
+   - ALB ensures high availability and fault tolerance for the frontend application.
+
+9. **Domain Management with AWS Route 53:**
+   - **Route 53** is configured to manage DNS records.
+   - An `A` record is created to point to the ALB for seamless domain-based access.
+
+10. **Monitoring & Alerts:**
    - **Prometheus**: Monitors Kubernetes resources and application metrics.
    - **Grafana**: Pulls data from Prometheus for visualization.
    - **Alert Manager**: Pushes alerts and triggers notifications.
@@ -76,13 +84,42 @@ To ensure that your Kubernetes cluster and application are accessible, configure
 
 ---
 
-## **Deploying with Ansible and Helm**
+## **Deploying with Terraform, Ansible, and Helm**
 
-### **Step 1: Setup Kubernetes Cluster with Ansible**
+### **Step 1: Provision AWS Infrastructure using Terraform**
+
+Navigate to the `terraform` directory and run:
+```sh
+terraform init
+terraform apply -auto-approve
+```
+This will provision the required AWS resources, including EC2 instances, VPC, security groups, and ECR repositories.
+
+### **Step 2: Setup Kubernetes Cluster with Ansible**
 Run the following Ansible command to provision the Kubernetes cluster with 1 master and 1 worker node:
-
-```bash
+```sh
 ansible-playbook -i ansible/inventory.ini ansible/playbook.yml 
+```
+
+### **Step 3: Build and Push Docker Images to ECR**
+
+Login to AWS ECR and push Docker images:
+```sh
+bash push-ecr.sh
+```
+Ensure that `push-ecr.sh` contains:
+```sh
+#!/bin/bash
+ECR_REGISTRY="<AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com"
+REPO_NAME="angularapp"
+
+aws ecr get-login-password --region <AWS_REGION> | docker login --username AWS --password-stdin $ECR_REGISTRY
+
+docker build -t $ECR_REGISTRY/$REPO_NAME:frontend-latest -f frontend/Dockerfile .
+docker push $ECR_REGISTRY/$REPO_NAME:frontend-latest
+
+docker build -t $ECR_REGISTRY/$REPO_NAME:backend-latest -f backend/Dockerfile .
+docker push $ECR_REGISTRY/$REPO_NAME:backend-latest
 ```
 
 ---
@@ -95,7 +132,11 @@ helm create helm-chart
 Modify `helm-chart/values.yaml` to store configurable values.
 
 ```sh
-helm upgrade --install angularapp helm-chart --namespace angularapp --create-namespace
+helm upgrade --install angularapp helm-chart --namespace angularapp --create-namespace \
+    --set frontend.image.repository=$ECR_REGISTRY/$REPO_NAME \
+    --set frontend.image.tag=frontend-latest \
+    --set backend.image.repository=$ECR_REGISTRY/$REPO_NAME \
+    --set backend.image.tag=backend-latest
 ```
 
 For rollbacks:
@@ -111,7 +152,7 @@ helm rollback angularapp 1
 ![db](diagrams/db.jpg)
 ![php](diagrams/php.jpg)
 ![run](diagrams/run.jpg)
-![angular app](diagrams/angular%20appjpg.jpg)
+![angular app](diagrams/angular%20app.jpg)
 
 ### **Jenkins Pipeline & Monitoring**
 
@@ -128,7 +169,7 @@ helm rollback angularapp 1
 ![prometheus](diagrams/rules.png)
 
 #### **Grafana Monitoring Dashboard**
-![grafana](diagrams/graphana.png)
+![grafana](diagrams/grafana.png)
 
 #### **Slack Notification Integration**
 ![slack](diagrams/slack.png)
@@ -136,6 +177,7 @@ helm rollback angularapp 1
 ---
 
 ## 🎯 **Final Thoughts**
+✅ **Terraform provisions AWS infrastructure (EC2, VPC, ECR, Security Groups).**  
 ✅ **Ansible automates Kubernetes cluster setup.**  
 ✅ **Helm simplifies deployments and version control.**  
 ✅ **Jenkins automates CI/CD pipelines for seamless application updates.**  
