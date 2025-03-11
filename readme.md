@@ -169,7 +169,7 @@ helm rollback angularapp 1
 ![prometheus](diagrams/rules.png)
 
 #### **Grafana Monitoring Dashboard**
-![grafana](diagrams/grafana.png)
+![grafana](diagrams/graphana.png)
 
 #### **Slack Notification Integration**
 ![slack](diagrams/slack.png)
