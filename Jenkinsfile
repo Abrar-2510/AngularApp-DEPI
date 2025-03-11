@@ -40,10 +40,10 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    docker build -t $FRONTEND_IMAGE:$FRONTEND_TAG -f frontend/Dockerfile frontend
+                    docker build -t $FRONTEND_IMAGE:$FRONTEND_TAG -f angular-app/frontend/Dockerfile .
                     docker push $FRONTEND_IMAGE:$FRONTEND_TAG
 
-                    docker build -t $BACKEND_IMAGE:$BACKEND_TAG -f backend/Dockerfile backend
+                    docker build -t $BACKEND_IMAGE:$BACKEND_TAG -f angular-app/backend/Dockerfile .
                     docker push $BACKEND_IMAGE:$BACKEND_TAG
                     '''
                 }
